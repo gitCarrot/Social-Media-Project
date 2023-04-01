@@ -6,7 +6,9 @@ import com.gitcarrot.socialmedia.exception.SocialMediaApplicationException;
 import com.gitcarrot.socialmedia.model.User;
 import com.gitcarrot.socialmedia.model.entity.UserEntity;
 import com.gitcarrot.socialmedia.repository.UserEntityRepository;
+import com.gitcarrot.socialmedia.util.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,12 @@ public class UserService {
 
     private final UserEntityRepository userEntityRepository;
     private final BCryptPasswordEncoder encoder;
+
+    @Value("${jwt.secret-key}")
+    private String secretKey;
+
+    @Value("${jwt.token.expired-time-ms")
+    private Long expiredTimeMs;
 
     @Transactional
     public User join(String userName, String password) {
@@ -45,8 +53,9 @@ public class UserService {
         }
 
         //token
+        String token = JwtTokenUtils.generateToken(userName, secretKey, expiredTimeMs );
 
-        return "";
+        return token;
     }
 
 }
