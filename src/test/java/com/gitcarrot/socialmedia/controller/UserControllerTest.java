@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gitcarrot.socialmedia.controller.request.UserJoinRequest;
 import com.gitcarrot.socialmedia.controller.request.UserLoginRequest;
+import com.gitcarrot.socialmedia.exception.ErrorCode;
 import com.gitcarrot.socialmedia.exception.SocialMediaApplicationException;
 import com.gitcarrot.socialmedia.model.User;
 import com.gitcarrot.socialmedia.service.UserService;
@@ -53,7 +54,7 @@ public class UserControllerTest {
         String userName = "userNmae";
         String password = "1234";
 
-        when(userService.join(userName, password)).thenThrow(new SocialMediaApplicationException());
+        when(userService.join(userName, password)).thenThrow(new SocialMediaApplicationException(ErrorCode.DUPLICATED_USER_NAME, ""));
 
         mockMvc.perform(post("/api/v1/users/join")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -80,7 +81,7 @@ public class UserControllerTest {
         String userName = "userNmae";
         String password = "1234";
 
-        when(userService.login(userName , password)).thenThrow(new SocialMediaApplicationException());
+        when(userService.login(userName , password)).thenThrow(new SocialMediaApplicationException(ErrorCode.DUPLICATED_USER_NAME, ""));
 
         mockMvc.perform(post("/api/v1/users/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -93,7 +94,7 @@ public class UserControllerTest {
         String userName = "userNmae";
         String password = "1234";
 
-        when(userService.login(userName, password)).thenThrow(new SocialMediaApplicationException());
+        when(userService.login(userName, password)).thenThrow(new SocialMediaApplicationException(ErrorCode.DUPLICATED_USER_NAME, ""));
 
         mockMvc.perform(post("/api/v1/users/login")
                 .contentType(MediaType.APPLICATION_JSON)

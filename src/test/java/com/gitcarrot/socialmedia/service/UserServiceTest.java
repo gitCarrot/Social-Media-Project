@@ -10,6 +10,7 @@ import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
 
@@ -26,6 +27,9 @@ public class UserServiceTest {
     @MockBean
     private UserEntityRepository userEntityRepository;
 
+    @MockBean
+    private BCryptPasswordEncoder encoder;
+
 
     @Test
     void validResgister() {
@@ -35,6 +39,7 @@ public class UserServiceTest {
         UserEntity fixture = UserEntityFixture.get(userName, password);
         // mocking
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.empty());
+        when(encoder.encode(password)).thenReturn("encrypt_password");
         when(userEntityRepository.save(any())).thenReturn(Optional.of(fixture));
 
         Assertions.assertDoesNotThrow(() -> userService.join(userName, password));
@@ -47,6 +52,7 @@ public class UserServiceTest {
         UserEntity fixture = UserEntityFixture.get(userName, password);
         // mocking
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(fixture));
+        when(encoder.encode(password)).thenReturn("encrypt_password");
         when(userEntityRepository.save(any())).thenReturn(Optional.of(mock(UserEntity.class)));
 
         Assertions.assertThrows(SocialMediaApplicationException.class , () -> userService.join(userName, password));
