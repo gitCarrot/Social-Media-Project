@@ -25,12 +25,30 @@ public class PostService {
     public void create(String title, String body, String userName){
 
         //user find
-        UserEntity userEntity = userEntityRepository.findByUserName(userName).orElseThrow(() -> new SocialMediaApplicationException(ErrorCode.USER_NOT_FOUND, String.format("%s not founded", userName)));
+        UserEntity userEntity = userEntityRepository.findByUserName(userName).orElseThrow(() ->
+                new SocialMediaApplicationException(ErrorCode.USER_NOT_FOUND, String.format("%s not founded", userName)));
 
         //post save
         PostEntity postEntity = postEntityRepository.save(PostEntity.of(title, body, userEntity));
         //return
     }
+
+    @Transactional
+    public void modify(String title, String body, String userName, Integer postId){
+
+        //user find
+        UserEntity userEntity = userEntityRepository.findByUserName(userName).orElseThrow(() ->
+                new SocialMediaApplicationException(ErrorCode.USER_NOT_FOUND, String.format("%s not founded", userName)));
+
+        //post exist
+
+        //post permission
+
+
+
+
+
+    }]
 
 
 }

@@ -2,6 +2,8 @@ package com.gitcarrot.socialmedia.service;
 
 import com.gitcarrot.socialmedia.exception.ErrorCode;
 import com.gitcarrot.socialmedia.exception.SocialMediaApplicationException;
+import com.gitcarrot.socialmedia.fixture.PostEntityFixture;
+import com.gitcarrot.socialmedia.fixture.UserEntityFixture;
 import com.gitcarrot.socialmedia.model.entity.PostEntity;
 import com.gitcarrot.socialmedia.model.entity.UserEntity;
 import com.gitcarrot.socialmedia.repository.PostEntityRepository;
@@ -62,4 +64,69 @@ public class PostServiceTest {
         SocialMediaApplicationException e = Assertions.assertThrows(SocialMediaApplicationException.class, () -> postService.create(title, body, userName));
         Assertions.assertEquals(ErrorCode.USER_NOT_FOUND, e.getErrorCode());
     }
+
+    @Test
+    void post_edit_success(){
+
+        String title = "title";
+        String body = "body";
+        String userName = "userName";
+        Integer postId = 1;
+
+        PostEntity postEntity = PostEntityFixture.get(userName, postId);
+        UserEntity userEntity = postEntity.getUser();
+        //mocking
+
+        PostEntity mockPostEntity = mock(PostEntity.class);
+
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity));
+        when(postEntityRepository.findById(postId)).thenReturn(Optional.of(postEntity));
+
+        Assertions.assertDoesNotThrow(() -> postService.modify(title, body, userName, postId));
+
+    }
+
+    @Test
+    void post_edit_error_from_noPost(){
+
+        String title = "title";
+        String body = "body";
+        String userName = "userName";
+        Integer postId = 1;
+
+        PostEntity postEntity = PostEntityFixture.get(userName, postId);
+        UserEntity userEntity = postEntity.getUser();
+        //mocking
+
+        PostEntity mockPostEntity = mock(PostEntity.class);
+
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity));
+        when(postEntityRepository.findById(postId)).thenReturn(Optional.empty());
+
+        SocialMediaApplicationException e = Assertions.assertThrows(SocialMediaApplicationException.class, () -> postService.modify(title, body, userName, postId));
+        Assertions.assertEquals(ErrorCode.POST_NOT_FOUND, e.getErrorCode());
+    }
+
+    @Test
+    void post_edit_error_from_noAuth(){
+
+        String title = "title";
+        String body = "body";
+        String userName = "userName";
+        Integer postId = 1;
+
+        PostEntity postEntity = PostEntityFixture.get(userName, postId);
+        UserEntity writer = UserEntityFixture.get("another", "111");
+        //mocking
+
+        PostEntity mockPostEntity = mock(PostEntity.class);
+
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(writer));
+        when(postEntityRepository.findById(postId)).thenReturn(Optional.of(postEntity));
+
+        SocialMediaApplicationException e = Assertions.assertThrows(SocialMediaApplicationException.class, () -> postService.modify(title, body, userName, postId));
+        Assertions.assertEquals(ErrorCode.INVALID_PERMISSION, e.getErrorCode());
+    }
+
+
 }
