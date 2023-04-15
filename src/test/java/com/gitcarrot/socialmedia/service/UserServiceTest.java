@@ -37,7 +37,7 @@ public class UserServiceTest {
         String userName = "userName";
         String password = "1234";
 
-        UserEntity fixture = UserEntityFixture.get(userName, password);
+        UserEntity fixture = UserEntityFixture.get(userName, password, 1);
         // mocking
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.empty());
         when(encoder.encode(password)).thenReturn("encrypt_password");
@@ -50,7 +50,7 @@ public class UserServiceTest {
     void Resgister_Fail_Already_User_Exist() {
         String userName = "userName";
         String password = "1234";
-        UserEntity fixture = UserEntityFixture.get(userName, password);
+        UserEntity fixture = UserEntityFixture.get(userName, password, 1);
         // mocking
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(fixture));
         when(encoder.encode(password)).thenReturn("encrypt_password");
@@ -65,7 +65,7 @@ public class UserServiceTest {
         String userName = "userName";
         String password = "1234";
 
-        UserEntity fixture = UserEntityFixture.get(userName, password);
+        UserEntity fixture = UserEntityFixture.get(userName, password, 1);
 
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(fixture));
         when(encoder.matches(password, fixture.getPassword())).thenReturn(true);
@@ -90,7 +90,7 @@ public class UserServiceTest {
         String userName = "userName";
         String password = "1234";
         String wrongPassword = "wrongPassword";
-        UserEntity fixture = UserEntityFixture.get(userName, password);
+        UserEntity fixture = UserEntityFixture.get(userName, password, 1);
         // mocking
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(fixture));
 

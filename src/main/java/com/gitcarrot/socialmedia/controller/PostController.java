@@ -2,14 +2,14 @@ package com.gitcarrot.socialmedia.controller;
 
 
 import com.gitcarrot.socialmedia.controller.request.PostCreateRequest;
+import com.gitcarrot.socialmedia.controller.request.PostModifyRequest;
+import com.gitcarrot.socialmedia.controller.response.PostResponse;
 import com.gitcarrot.socialmedia.controller.response.Response;
+import com.gitcarrot.socialmedia.model.Post;
 import com.gitcarrot.socialmedia.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/posts")
@@ -21,11 +21,14 @@ public class PostController {
 
     @PostMapping
     public Response<Void> create(@RequestBody PostCreateRequest request, Authentication authentication){
-
-
         postService.create(request.getTitle(), request.getBody(), authentication.getName());
+        return Response.success();
+    }
 
-        return Response.success(null);
+    @PutMapping("/{postId}")
+    public Response<PostResponse> edit(@PathVariable Integer postId, @RequestBody PostModifyRequest request, Authentication authentication){
+        Post post = postService.modify(request.getTitle(), request.getBody(), authentication.getName(), postId);
+        return Response.success(PostResponse.fromPost(post));
     }
 
 
