@@ -14,6 +14,8 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
@@ -129,5 +131,87 @@ public class PostServiceTest {
         Assertions.assertEquals(ErrorCode.INVALID_PERMISSION, e.getErrorCode());
     }
 
+<<<<<<< Updated upstream
+=======
+    @Test
+    void post_delete_success(){
+
+        String userName = "userName";
+        Integer postId = 1;
+
+        PostEntity postEntity = PostEntityFixture.get(userName, postId, 1);
+        UserEntity userEntity = postEntity.getUser();
+        //mocking
+
+        PostEntity mockPostEntity = mock(PostEntity.class);
+
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity));
+        when(postEntityRepository.findById(postId)).thenReturn(Optional.of(postEntity));
+
+        Assertions.assertDoesNotThrow(() -> postService.delete("userName", 1));
+
+    }
+
+    @Test
+    void post_delete_error_from_noPost(){
+
+        String userName = "userName";
+        Integer postId = 1;
+
+        PostEntity postEntity = PostEntityFixture.get(userName, postId, 1);
+        UserEntity userEntity = postEntity.getUser();
+        //mocking
+
+        PostEntity mockPostEntity = mock(PostEntity.class);
+
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity));
+        when(postEntityRepository.findById(postId)).thenReturn(Optional.empty());
+
+        SocialMediaApplicationException e = Assertions.assertThrows(SocialMediaApplicationException.class, () ->
+                postService.delete(userName, 1));
+        Assertions.assertEquals(ErrorCode.POST_NOT_FOUND, e.getErrorCode());
+    }
+
+    @Test
+    void post_delete_error_from_noAuth(){
+
+        String userName = "userName";
+        Integer postId = 1;
+
+        PostEntity postEntity = PostEntityFixture.get(userName, postId, 1);
+        UserEntity writer = UserEntityFixture.get("another", "111", 2);
+        //mocking
+
+        PostEntity mockPostEntity = mock(PostEntity.class);
+
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(writer));
+        when(postEntityRepository.findById(postId)).thenReturn(Optional.of(postEntity));
+
+        SocialMediaApplicationException e = Assertions.assertThrows(SocialMediaApplicationException.class, () -> postService.delete(userName, 1));
+        Assertions.assertEquals(ErrorCode.INVALID_PERMISSION, e.getErrorCode());
+    }
+
+    @Test
+    void feed_list_success(){
+        //mocking
+        Pageable pageable = mock(Pageable.class);
+        when(postEntityRepository.findAll(pageable)).thenReturn(Page.empty());
+        Assertions.assertDoesNotThrow(() -> postService.list(pageable));
+    }
+
+    @Test
+    void feed_my_list_success(){
+        //mocking
+        Pageable pageable = mock(Pageable.class);
+        UserEntity user = mock(UserEntity.class);
+        when(userEntityRepository.findByUserName(any())).thenReturn(Optional.of(user));
+        when(postEntityRepository.findAllByUser(any(), pageable)).thenReturn(Page.empty());
+        Assertions.assertDoesNotThrow(() -> postService.my("", pageable));
+    }
+
+
+
+
+>>>>>>> Stashed changes
 
 }
