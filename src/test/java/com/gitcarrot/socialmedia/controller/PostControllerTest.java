@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -135,4 +136,100 @@ public class PostControllerTest {
     }
 
 
+<<<<<<< Updated upstream
+=======
+
+    @Test
+    @WithMockUser
+    void deleting_post() throws Exception {
+
+        mockMvc.perform(delete("/api/v1/posts/1")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(print()).andExpect(status().isOk());
+    }
+
+    @Test
+    @WithAnonymousUser
+    void deleting_post_without_signing_in() throws Exception {
+
+        mockMvc.perform(delete("/api/v1/posts/1")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(print()).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser
+    void deleting_post_wrong_user() throws Exception {
+
+
+        //mocking (void)
+        doThrow(new SocialMediaApplicationException(ErrorCode.INVALID_PERMISSION)).when(postService).delete(any(), any());
+
+        mockMvc.perform(delete("/api/v1/posts/1")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(print()).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser
+    void deleting_post_but_no_post() throws Exception {
+
+        //mocking (void)
+        doThrow(new SocialMediaApplicationException(ErrorCode.POST_NOT_FOUND)).when(postService).delete(any(), any());
+
+        mockMvc.perform(delete("/api/v1/posts/1")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(print()).andExpect(status().isNotFound());
+    }
+
+
+    @Test
+    @WithMockUser
+    void feed_list() throws Exception {
+
+        when(postService.list(any())).thenReturn(Page.empty());
+
+
+        mockMvc.perform(get("/api/v1/posts")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(print()).andExpect(status().isOk());
+    }
+
+    @Test
+    @WithAnonymousUser
+    void feed_list_without_signing_in() throws Exception {
+
+        when(postService.list(any())).thenReturn(Page.empty());
+
+        mockMvc.perform(get("/api/v1/posts")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(print()).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser
+    void my_feed_list() throws Exception {
+
+        when(postService.my(any(), any())).thenReturn(Page.empty());
+
+        mockMvc.perform(get("/api/v1/posts")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(print()).andExpect(status().isOk());
+    }
+
+    @Test
+    @WithAnonymousUser
+    void my_feed_list_without_signing_in() throws Exception {
+
+        when(postService.my(any(), any())).thenReturn(Page.empty());
+
+        mockMvc.perform(get("/api/v1/posts")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(print()).andExpect(status().isUnauthorized());
+    }
+
+
+
+
+>>>>>>> Stashed changes
 }
